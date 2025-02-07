@@ -17,6 +17,15 @@ class Users(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
+
+#Temporary table
+class Preferences(db.model):
+    email = db.Column(db.String(100), unique=True, nullable=False, primary_key=True)
+    prefer = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return f'<User {self.email}>'
+
 #Create tables in the database (one-time setup for now)
 with app.app_context():
     db.create_all()
