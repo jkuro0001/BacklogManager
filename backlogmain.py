@@ -22,7 +22,7 @@ class Users(db.Model):
 
 
 #Temporary table
-class Preferences(db.model):
+class Preferences(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False, primary_key=True)
     prefer = db.Column(db.String(200), nullable=False)
 
