@@ -5,13 +5,15 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 #Connection: MAKE SURE TO REPLACE USERNAME:PASSWORD WITH THE ONE SET UP ON YOUR OWN DEVICE
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://USERNAME:PASSWORD@localhost:5432/backlogdatabase'
+#SSH Tunnel Forward to Local Port: ssh -L 5433:127.0.0.1:5432 USERNAME@128.113.126.87
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://USERNAME:1234@127.0.0.1:5433/backlog_manager'
 
 db = SQLAlchemy(app)
 
 #Define basic users table
 class Users(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
 
     def __repr__(self):
