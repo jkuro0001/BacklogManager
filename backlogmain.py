@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import hashlib
 #pip install flask flask_sqlalchemy psycopg2
 
 app = Flask(__name__)
@@ -40,6 +41,16 @@ def insert_test_user():
     db.session.add(test_user)
     db.session.commit()
     return "Test user inserted successfully!"
+
+
+def hash_password(password: str) -> str:
+    """Hashes a password using SHA-256."""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def verify_password(input_password: str, stored_hash: str) -> bool:
+    """Verifies if the input password matches the stored hash."""
+    return hash_password(input_password) == stored_hash
+
 
 if __name__ == '__main__':
     app.run(debug=False)
