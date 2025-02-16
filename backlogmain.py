@@ -1,13 +1,15 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import hashlib
-#pip install flask flask_sqlalchemy psycopg2
+#pip install flask flask_sqlalchemy psycopg2 flask_cors
 
 app = Flask(__name__)
+CORS(app)
 
 #Connection: MAKE SURE TO REPLACE USERNAME:PASSWORD WITH THE ONE SET UP ON YOUR OWN DEVICE
 #SSH Tunnel Forward to Local Port: ssh -L 5433:127.0.0.1:5432 USERNAME@128.113.126.87
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://USERNAME:1234@127.0.0.1:5433/backlog_manager'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://zhengd3:1234@127.0.0.1:5433/backlog_manager'
 
 db = SQLAlchemy(app)
 
@@ -33,14 +35,19 @@ class Preferences(db.Model):
 with app.app_context():
     db.create_all()
 
-#Testing insert to table
-#Go to http://127.0.0.1:5000/insert_test_user on browser to activate
-@app.route('/insert_test_user', methods=['GET'])
-def insert_test_user():
-    test_user = Users(email="test@example.com", password_hash="hashedpassword123")
-    db.session.add(test_user)
+#API route to register a new user: http://127.0.0.1:5000/register
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    existing_user = Users.query.filter((Users.email == data['email'])).first()
+    if existing_user:
+        return jsonify({"error": "User already exists!"}), 400
+
+    new_user = Users(email=data['email'], name=data['name'], password=hash_password(data['password']))
+    db.session.add(new_user)
     db.session.commit()
-    return "Test user inserted successfully!"
+    
+    return jsonify({"message": "User registered successfully!"}), 201
 
 
 def hash_password(password: str) -> str:
