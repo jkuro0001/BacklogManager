@@ -35,7 +35,11 @@ class Preferences(db.Model):
 with app.app_context():
     db.create_all()
 
+#Allow requests from frontend
+CORS(app, resources={r"/*": {"origins": "http://128.113.126.87:3000"}})
+
 #API route to register a new user: http://127.0.0.1:5000/register
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
