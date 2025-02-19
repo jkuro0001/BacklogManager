@@ -5,19 +5,42 @@ import "../styles/create_account.css";
 
 const CreateAccount = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
+  const [message, setMessage] = useState("");
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
+
+    try {
+      const response = await fetch("http://128.113.126.87:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Account created successfully!");
+      } else {
+        setMessage(`Error: ${data.message || "Something went wrong"}`);
+      }
+    } catch (error) {
+      console.error("Error creating account:", error);
+      setMessage("Server error. Please try again.");
+    }
   };
 
   return (
@@ -26,8 +49,8 @@ const CreateAccount = () => {
         <h1>Create Account</h1>
       </div>
       <form className="input-grp" onSubmit={handleSubmit}>
-        <label htmlFor="username">Username:</label>
-        <input type="text" name="username" value={formData.username} onChange={handleChange} />
+        <label htmlFor="name">Display Name:</label>
+        <input type="text" name="name" value={formData.name} onChange={handleChange} />
         <br /><br />
 
         <label htmlFor="email">Email:</label>
