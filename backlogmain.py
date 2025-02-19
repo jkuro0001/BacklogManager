@@ -43,6 +43,7 @@ CORS(app, resources={r"/*": {"origins": "http://128.113.126.87:3000"}})
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
+    print(data)
     existing_user = Users.query.filter((Users.email == data['email'])).first()
     if existing_user:
         return jsonify({"error": "User already exists!"}), 400
