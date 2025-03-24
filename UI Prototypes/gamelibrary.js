@@ -1,3 +1,4 @@
+
 let exampleGames = [
     "Elden Ring",
     "Cyberpunk 2077",
@@ -103,7 +104,7 @@ function closeGamePopup() {
 
 function fetchExampleGames(searchQuery = "") {
     const resultsContainer = document.getElementById("searchResults");
-    resultsContainer.innerHTML = ""; 
+    resultsContainer.innerHTML = "";
 
     const filteredGames = exampleGames.filter(game =>
         game.toLowerCase().includes(searchQuery.toLowerCase())
@@ -117,14 +118,6 @@ function fetchExampleGames(searchQuery = "") {
         resultsContainer.appendChild(gameElement);
     });
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const searchButton = document.querySelector(".search-button");
-    searchButton.addEventListener("click", () => {
-        const searchBar = document.getElementById("searchBar");
-        fetchExampleGames(searchBar.value);
-    });
-});
 
 function selectGame(gameName, element) {
     document.querySelectorAll(".search-result").forEach(el => {
@@ -140,7 +133,6 @@ function addSelectedGame() {
         return;
     }
 
-    
     const userEmail = localStorage.getItem("email");
     if (!userEmail) {
         alert("User not logged in. Please log in to add games.");
@@ -162,7 +154,6 @@ function addSelectedGame() {
             gameDiv.textContent = currentSelectedGame;
             gameDiv.classList.add("added-game");
             container.appendChild(gameDiv);
-
             currentSelectedGame = "";
             closeGamePopup();
         } else {
@@ -174,4 +165,24 @@ function addSelectedGame() {
         alert("Error saving game");
     });
 }
+
+function loadUserGames() {
+    const userEmail = localStorage.getItem("email");
+    if (!userEmail) return;
+
+    fetch(`http://127.0.0.1:5000/get_games?email=${userEmail}`)
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById("addedGamesContainer");
+            data.forEach(game => {
+                const gameDiv = document.createElement("div");
+                gameDiv.textContent = game.gameid;
+                gameDiv.classList.add("added-game");
+                container.appendChild(gameDiv);
+            });
+        })
+        .catch(err => console.error("Error loading games:", err));
+}
+
+document.addEventListener("DOMContentLoaded", loadUserGames);
 */
